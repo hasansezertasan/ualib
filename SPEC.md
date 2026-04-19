@@ -82,7 +82,7 @@ Determines if the user-agent represents a mobile phone device.
 
 - Tablets should return `false` (use `is_tablet` for tablets)
 - Desktop browsers on mobile user-agent mode should return `true`
-- Bots pretending to be mobile should still return `true` based on the UA string content
+- Bots should return `false` (use `is_bot` for bots)
 
 **Example:**
 
@@ -112,6 +112,7 @@ Determines if the user-agent represents a tablet device.
 **Behavior:**
 
 - Mobile phones should return `false`
+- Bots should return `false` (use `is_bot` for bots)
 - Desktop mode on tablets may return `false` if the UA string doesn't indicate tablet
 - Large phones (phablets) should typically return `false` unless explicitly identified as tablets
 
