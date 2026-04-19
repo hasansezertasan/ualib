@@ -119,7 +119,7 @@ Additional requirements:
 If you prefer to implement it yourself without AI:
 
 1. **Read the specification:** Start with `SPEC.md` to understand all function behaviors
-2. **Set up your project:** Create a new project in your language with testing framework
+2. **Set up your project:** Create a new project in your language with a testing framework
 3. **Implement the data structures:** Create the UserAgent object/struct with browser, os, device, engine, cpu fields
 4. **Implement parse():** This is the core function - build regex patterns or use a parsing library
 5. **Implement the boolean checks:** These can often delegate to parse() and check the device.type
