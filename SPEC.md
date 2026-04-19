@@ -1,0 +1,468 @@
+# ualib Specification
+
+A ghost library for parsing user-agent strings into structured data. This library identifies devices, browsers, operating systems, and other characteristics from HTTP User-Agent headers.
+
+## Core Functions
+
+### 1. `parse(ua_string: string) -> UserAgent`
+
+Parses a user-agent string into a structured object containing browser, OS, device, and engine information.
+
+**Parameters:**
+
+- `ua_string` (string): The user-agent string to parse
+
+**Returns:**
+A structured object (UserAgent) with the following properties:
+
+```
+{
+  "browser": {
+    "name": string,      // e.g., "Chrome", "Safari", "Firefox"
+    "version": string,   // e.g., "120.0.6099.109"
+    "major": string      // e.g., "120"
+  },
+  "os": {
+    "name": string,      // e.g., "Windows", "macOS", "Linux", "iOS", "Android"
+    "version": string    // e.g., "10", "14.2", "11.0"
+  },
+  "device": {
+    "type": string,      // e.g., "mobile", "tablet", "desktop", "bot", "wearable", "console", "tv", null
+    "model": string,     // e.g., "iPhone", "iPad", "Pixel 6", null
+    "vendor": string     // e.g., "Apple", "Samsung", "Google", null
+  },
+  "engine": {
+    "name": string,      // e.g., "Blink", "WebKit", "Gecko", null
+    "version": string    // e.g., "120.0.6099.109", null
+  },
+  "cpu": {
+    "architecture": string  // e.g., "amd64", "arm64", "arm", null
+  }
+}
+```
+
+**Behavior:**
+
+- Returns default/null values for unrecognized components
+- Never throws exceptions on invalid input
+- Handles empty strings gracefully
+- All fields should be nullable when information is unavailable
+
+**Example:**
+
+```
+Input: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
+
+Output:
+{
+  "browser": {"name": "Mobile Safari", "version": "16.0", "major": "16"},
+  "os": {"name": "iOS", "version": "16.0"},
+  "device": {"type": "mobile", "model": "iPhone", "vendor": "Apple"},
+  "engine": {"name": "WebKit", "version": "605.1.15"},
+  "cpu": {"architecture": null}
+}
+```
+
+---
+
+### 2. `is_mobile(ua_string: string) -> boolean`
+
+Determines if the user-agent represents a mobile phone device.
+
+**Parameters:**
+
+- `ua_string` (string): The user-agent string to check
+
+**Returns:**
+
+- `true` if the user-agent is from a mobile phone (iPhone, Android phone, Windows Phone, BlackBerry, etc.)
+- `false` otherwise
+
+**Behavior:**
+
+- Tablets should return `false` (use `is_tablet` for tablets)
+- Desktop browsers on mobile user-agent mode should return `true`
+- Bots pretending to be mobile should still return `true` based on the UA string content
+
+**Example:**
+
+```
+Input: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)"
+Output: true
+
+Input: "Mozilla/5.0 (iPad; CPU OS 16_0 like Mac OS X)"
+Output: false
+```
+
+---
+
+### 3. `is_tablet(ua_string: string) -> boolean`
+
+Determines if the user-agent represents a tablet device.
+
+**Parameters:**
+
+- `ua_string` (string): The user-agent string to check
+
+**Returns:**
+
+- `true` if the user-agent is from a tablet (iPad, Android tablets, Kindle Fire, Surface, etc.)
+- `false` otherwise
+
+**Behavior:**
+
+- Mobile phones should return `false`
+- Desktop mode on tablets may return `false` if the UA string doesn't indicate tablet
+- Large phones (phablets) should typically return `false` unless explicitly identified as tablets
+
+**Example:**
+
+```
+Input: "Mozilla/5.0 (iPad; CPU OS 16_0 like Mac OS X)"
+Output: true
+
+Input: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)"
+Output: false
+```
+
+---
+
+### 4. `is_pc(ua_string: string) -> boolean`
+
+Determines if the user-agent represents a desktop/PC computer.
+
+**Parameters:**
+
+- `ua_string` (string): The user-agent string to check
+
+**Returns:**
+
+- `true` if the user-agent is from a desktop/laptop computer (Windows, macOS, Linux desktop)
+- `false` otherwise
+
+**Behavior:**
+
+- Should return `false` for mobile and tablet devices
+- Should return `false` for bots (use `is_bot` for bots)
+- Desktop browsers in mobile mode should return `false`
+
+**Example:**
+
+```
+Input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0"
+Output: true
+
+Input: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)"
+Output: false
+```
+
+---
+
+### 5. `is_bot(ua_string: string) -> boolean`
+
+Determines if the user-agent represents a bot, crawler, or spider.
+
+**Parameters:**
+
+- `ua_string` (string): The user-agent string to check
+
+**Returns:**
+
+- `true` if the user-agent is from a bot/crawler/spider (Googlebot, Bingbot, search crawlers, monitoring services, etc.)
+- `false` otherwise
+
+**Behavior:**
+
+- Should detect common search engine crawlers (Google, Bing, Yahoo, Baidu, Yandex, DuckDuckGo)
+- Should detect social media crawlers (Facebook, Twitter, LinkedIn, Slack)
+- Should detect monitoring services (Pingdom, StatusCake, UptimeRobot)
+- Should detect AI crawlers (GPTBot, Claude-Web, ChatGPT-User)
+- Generic "bot" keywords in UA strings should trigger `true`
+- Headless browsers without explicit bot identification should return `false`
+
+**Example:**
+
+```
+Input: "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+Output: true
+
+Input: "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"
+Output: true
+
+Input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0"
+Output: false
+```
+
+---
+
+## Data Types & Constants
+
+### Device Types
+
+Valid values for `device.type`:
+
+- `"mobile"` - Mobile phones
+- `"tablet"` - Tablets and large-screen mobile devices
+- `"desktop"` - Desktop and laptop computers
+- `"bot"` - Crawlers, spiders, and automated agents
+- `"wearable"` - Smartwatches and wearable devices
+- `"console"` - Gaming consoles
+- `"tv"` - Smart TVs and streaming devices
+- `null` - Unknown or unclassifiable device
+
+### Common Browsers
+
+- Chrome, Firefox, Safari, Edge, Opera, Internet Explorer
+- Mobile Safari, Chrome Mobile, Firefox Mobile, Samsung Internet
+- UC Browser, Opera Mini, Brave, Vivaldi
+
+### Common Operating Systems
+
+- Windows (7, 8, 8.1, 10, 11)
+- macOS (various versions)
+- Linux (Ubuntu, Debian, Fedora, etc.)
+- iOS (iPhone OS)
+- Android
+- Chrome OS
+
+### Common Engines
+
+- Blink (Chrome, Edge, Opera)
+- WebKit (Safari, older Chrome)
+- Gecko (Firefox)
+- Trident (Internet Explorer)
+- EdgeHTML (older Edge)
+
+### Common CPU Architectures
+
+- amd64 / x64 / x86_64
+- arm64 / aarch64
+- arm / armv7l
+- ia32 / x86
+
+---
+
+## Edge Cases & Special Handling
+
+### Empty or Invalid Input
+
+- Empty strings should return default values (nulls for unknown data)
+- Malformed UA strings should parse whatever information is recognizable
+- Functions should never throw exceptions
+
+### Ambiguous Cases
+
+- When device type is ambiguous, prefer the most specific classification
+- If both mobile and tablet indicators present, prefer tablet
+- If bot-like and device-like indicators present, prefer bot
+
+### Version Parsing
+
+- Version strings should be kept as-is when possible
+- `major` version should extract the first numeric segment
+- Missing versions should return `null` or empty string
+
+### Nullability
+
+- All object properties should support null/undefined values
+- Missing information should be explicitly `null`, not empty strings
+- Boolean functions (`is_*`) always return definite `true` or `false`
+
+### Encoding & Special Characters
+
+- UA strings may contain special characters and should be handled safely
+- URL-encoded characters in UA strings should be decoded if necessary
+- Unicode characters should be supported
+
+### Input Validation
+
+- User-agent strings can be up to 2048 characters (practical browser limit)
+- Strings exceeding this should be truncated before parsing
+- Control characters (0x00-0x1F) should be stripped or replaced
+- Very long strings (>10KB) may indicate malicious input and should be rejected or truncated
+
+---
+
+## Implementation Notes
+
+### Performance Considerations
+
+- Implementations should optimize for speed on repeated parsing
+- Consider caching parsed results if the same UA is checked multiple times
+- Regex patterns should be pre-compiled where applicable
+- Use atomic groups or possessive quantifiers in regex to prevent ReDoS attacks
+- Set regex timeout limits (e.g., 100ms max per pattern)
+- Consider rate-limiting parse() calls in production to prevent DoS
+
+### Testing Requirements
+
+- Must pass all test cases in `tests.yaml`
+- Should handle real-world user-agent strings accurately
+- **CRITICAL**: Boolean functions MUST maintain strict consistency with parse() results
+
+### Boolean Function Implementation (REQUIRED)
+
+The boolean functions MUST return true if and only if the device type matches:
+
+```
+is_mobile(ua) ⟺ parse(ua).device.type == "mobile"
+is_tablet(ua) ⟺ parse(ua).device.type == "tablet"
+is_pc(ua) ⟺ parse(ua).device.type == "desktop"
+is_bot(ua) ⟺ parse(ua).device.type == "bot"
+```
+
+**This invariant must hold for ALL inputs, without exception.**
+
+**Bot Detection Priority**: When a user-agent is identified as a bot (contains bot signatures like "Googlebot", "bingbot", etc.), it should ALWAYS return `device.type = "bot"`, even if it also contains mobile/tablet indicators. This means:
+- Googlebot Smartphone → `device.type = "bot"`, `is_mobile() = false`, `is_bot() = true`
+- A bot takes precedence over all other device type classifications
+
+### Language-Specific Adaptations
+
+- Function names should follow the language's naming conventions (e.g., `is_mobile` in Python, `isMobile` in JavaScript)
+- Return types should use the language's native types (objects, structs, classes, etc.)
+- Null handling should follow language idioms (see below)
+
+### Null Handling by Language
+
+Different languages handle null/missing values differently. Use the appropriate idiom:
+
+- **Python**: Use `None` for null values
+- **JavaScript**: Use `null` (not `undefined`) for consistency
+- **TypeScript**: Use `null` and mark fields as `string | null`
+- **Go**: Use `nil` for pointers, empty string `""` for strings, or use pointer types (`*string`)
+- **Rust**: Use `Option<String>` for nullable string fields
+- **Java/C#**: Use `null` for reference types
+- **Ruby**: Use `nil`
+- **PHP**: Use `null`
+
+### CPU Architecture Detection (Deprecated)
+
+**Important**: Modern browsers (2020+) do not expose CPU architecture in user-agent strings for privacy reasons. Most test cases show `cpu.architecture: null`.
+
+- Implementations should return `null` unless architecture is explicitly present in the UA string
+- **DO NOT** infer architecture from OS (e.g., iOS → arm64) as this is unreliable and violates user privacy
+- Only parse architecture if explicitly stated (e.g., "x86_64", "amd64", "arm64")
+
+### Security Considerations
+
+Implementations must handle user-agent strings safely:
+
+- **Never echo raw user-agent strings** in error messages, logs, or responses (XSS risk)
+- **Sanitize UA strings before display**: Strip control characters (0x00-0x1F)
+- **Validate string length**: Reject or truncate strings longer than 2048 characters
+- **Prevent ReDoS**: Use timeouts on regex operations (max 100ms per pattern)
+- **Rate limiting**: Consider limiting parse() calls per client to prevent DoS
+- **No eval/exec**: Never execute code from user-agent strings
+- **Log safely**: When logging UA strings, truncate to 200 characters and escape special chars
+
+---
+
+## Examples
+
+### Desktop Chrome on Windows
+
+```
+UA: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+parse() returns:
+{
+  "browser": {"name": "Chrome", "version": "120.0.0.0", "major": "120"},
+  "os": {"name": "Windows", "version": "10"},
+  "device": {"type": "desktop", "model": null, "vendor": null},
+  "engine": {"name": "Blink", "version": "120.0.0.0"},
+  "cpu": {"architecture": "amd64"}
+}
+
+is_mobile() -> false
+is_tablet() -> false
+is_pc() -> true
+is_bot() -> false
+```
+
+### Safari on iPhone
+
+```
+UA: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1"
+
+parse() returns:
+{
+  "browser": {"name": "Mobile Safari", "version": "17.2", "major": "17"},
+  "os": {"name": "iOS", "version": "17.2"},
+  "device": {"type": "mobile", "model": "iPhone", "vendor": "Apple"},
+  "engine": {"name": "WebKit", "version": "605.1.15"},
+  "cpu": {"architecture": null}
+}
+
+is_mobile() -> true
+is_tablet() -> false
+is_pc() -> false
+is_bot() -> false
+```
+
+### Chrome on iPad
+
+```
+UA: "Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/120.0.6099.119 Mobile/15E148 Safari/604.1"
+
+parse() returns:
+{
+  "browser": {"name": "Chrome Mobile iOS", "version": "120.0.6099.119", "major": "120"},
+  "os": {"name": "iOS", "version": "17.2"},
+  "device": {"type": "tablet", "model": "iPad", "vendor": "Apple"},
+  "engine": {"name": "WebKit", "version": "605.1.15"},
+  "cpu": {"architecture": null}
+}
+
+is_mobile() -> false
+is_tablet() -> true
+is_pc() -> false
+is_bot() -> false
+```
+
+### Googlebot
+
+```
+UA: "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+
+parse() returns:
+{
+  "browser": {"name": "Googlebot", "version": "2.1", "major": "2"},
+  "os": {"name": null, "version": null},
+  "device": {"type": "bot", "model": null, "vendor": "Google"},
+  "engine": {"name": null, "version": null},
+  "cpu": {"architecture": null}
+}
+
+is_mobile() -> false
+is_tablet() -> false
+is_pc() -> false
+is_bot() -> true
+```
+
+### Samsung Internet on Android
+
+```
+UA: "Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/23.0 Chrome/115.0.0.0 Mobile Safari/537.36"
+
+parse() returns:
+{
+  "browser": {"name": "Samsung Internet", "version": "23.0", "major": "23"},
+  "os": {"name": "Android", "version": "13"},
+  "device": {"type": "mobile", "model": "SM-S918B", "vendor": "Samsung"},
+  "engine": {"name": "Blink", "version": "115.0.0.0"},
+  "cpu": {"architecture": null}
+}
+
+is_mobile() -> true
+is_tablet() -> false
+is_pc() -> false
+is_bot() -> false
+```
+
+---
+
+## Version
+
+Specification Version: 1.0.0
+Last Updated: 2026-02-09

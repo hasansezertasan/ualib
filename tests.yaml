@@ -1,0 +1,1048 @@
+# ualib Test Cases
+# Language-agnostic test cases for user-agent parsing
+# Each test specifies input and expected output for all functions
+
+# Format:
+# - description: Human-readable test description
+#   input: The user-agent string to parse
+#   parse:  Expected output from parse() function
+#   is_mobile: Expected boolean from is_mobile()
+#   is_tablet: Expected boolean from is_tablet()
+#   is_pc: Expected boolean from is_pc()
+#   is_bot: Expected boolean from is_bot()
+
+# Version Note: Version numbers should match exactly as specified in these tests.
+# If your parser extracts a different version format from the same UA string,
+# update this file to reflect the canonical format for that browser/OS.
+# The goal is consistency across implementations, not perfection in version parsing.
+
+tests:
+  # ============================================================================
+  # Desktop Browsers - Windows
+  # ============================================================================
+
+  - description: "Chrome on Windows 10"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    parse:
+      browser: { name: "Chrome", version: "120.0.0.0", major: "120" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Firefox on Windows 11"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    parse:
+      browser: { name: "Firefox", version: "121.0", major: "121" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Gecko", version: "121.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Edge on Windows 10"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
+    parse:
+      browser: { name: "Edge", version: "120.0.0.0", major: "120" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Internet Explorer 11 on Windows 8.1"
+    input: "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
+    parse:
+      browser: { name: "IE", version: "11.0", major: "11" }
+      os: { name: "Windows", version: "8.1" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Trident", version: "7.0" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  # ============================================================================
+  # Desktop Browsers - macOS
+  # ============================================================================
+
+  - description: "Safari on macOS"
+    input: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15"
+    parse:
+      browser: { name: "Safari", version: "17.2", major: "17" }
+      os: { name: "Mac OS X", version: "14.2" }
+      device: { type: "desktop", model: null, vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Chrome on macOS"
+    input: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    parse:
+      browser: { name: "Chrome", version: "120.0.0.0", major: "120" }
+      os: { name: "Mac OS X", version: "10.15.7" }
+      device: { type: "desktop", model: null, vendor: "Apple" }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Firefox on macOS"
+    input: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.2; rv:121.0) Gecko/20100101 Firefox/121.0"
+    parse:
+      browser: { name: "Firefox", version: "121.0", major: "121" }
+      os: { name: "Mac OS X", version: "14.2" }
+      device: { type: "desktop", model: null, vendor: "Apple" }
+      engine: { name: "Gecko", version: "121.0" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  # ============================================================================
+  # Desktop Browsers - Linux
+  # ============================================================================
+
+  - description: "Chrome on Linux"
+    input: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    parse:
+      browser: { name: "Chrome", version: "120.0.0.0", major: "120" }
+      os: { name: "Linux", version: null }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Firefox on Ubuntu"
+    input: "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0"
+    parse:
+      browser: { name: "Firefox", version: "121.0", major: "121" }
+      os: { name: "Ubuntu", version: null }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Gecko", version: "121.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  # ============================================================================
+  # Mobile Browsers - iOS (iPhone)
+  # ============================================================================
+
+  - description: "Safari on iPhone"
+    input: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1"
+    parse:
+      browser: { name: "Mobile Safari", version: "17.2", major: "17" }
+      os: { name: "iOS", version: "17.2" }
+      device: { type: "mobile", model: "iPhone", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Chrome on iPhone"
+    input: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/120.0.6099.119 Mobile/15E148 Safari/604.1"
+    parse:
+      browser:
+        { name: "Chrome Mobile iOS", version: "120.0.6099.119", major: "120" }
+      os: { name: "iOS", version: "17.2" }
+      device: { type: "mobile", model: "iPhone", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Firefox on iPhone"
+    input: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/121.0 Mobile/15E148 Safari/605.1.15"
+    parse:
+      browser: { name: "Firefox Mobile iOS", version: "121.0", major: "121" }
+      os: { name: "iOS", version: "17.2" }
+      device: { type: "mobile", model: "iPhone", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Safari on iPhone (older OS version)"
+    input: "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
+    parse:
+      browser: { name: "Mobile Safari", version: "14.0", major: "14" }
+      os: { name: "iOS", version: "14.0" }
+      device: { type: "mobile", model: "iPhone", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # Mobile Browsers - Android
+  # ============================================================================
+
+  - description: "Chrome on Android phone"
+    input: "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.144 Mobile Safari/537.36"
+    parse:
+      browser:
+        { name: "Chrome Mobile", version: "120.0.6099.144", major: "120" }
+      os: { name: "Android", version: "13" }
+      device: { type: "mobile", model: "Pixel 7", vendor: "Google" }
+      engine: { name: "Blink", version: "120.0.6099.144" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Samsung Internet on Galaxy S23"
+    input: "Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/23.0 Chrome/115.0.0.0 Mobile Safari/537.36"
+    parse:
+      browser: { name: "Samsung Internet", version: "23.0", major: "23" }
+      os: { name: "Android", version: "13" }
+      device: { type: "mobile", model: "SM-S918B", vendor: "Samsung" }
+      engine: { name: "Blink", version: "115.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Firefox on Android phone"
+    input: "Mozilla/5.0 (Android 13; Mobile; rv:121.0) Gecko/121.0 Firefox/121.0"
+    parse:
+      browser: { name: "Firefox Mobile", version: "121.0", major: "121" }
+      os: { name: "Android", version: "13" }
+      device: { type: "mobile", model: null, vendor: null }
+      engine: { name: "Gecko", version: "121.0" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Chrome on generic Android device"
+    input: "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36"
+    parse:
+      browser: { name: "Chrome Mobile", version: "119.0.0.0", major: "119" }
+      os: { name: "Android", version: "12" }
+      device: { type: "mobile", model: null, vendor: null }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # Tablets - iPad
+  # ============================================================================
+
+  - description: "Safari on iPad"
+    input: "Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1"
+    parse:
+      browser: { name: "Mobile Safari", version: "17.2", major: "17" }
+      os: { name: "iOS", version: "17.2" }
+      device: { type: "tablet", model: "iPad", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: true
+    is_pc: false
+    is_bot: false
+
+  - description: "Chrome on iPad"
+    input: "Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/120.0.6099.119 Mobile/15E148 Safari/604.1"
+    parse:
+      browser:
+        { name: "Chrome Mobile iOS", version: "120.0.6099.119", major: "120" }
+      os: { name: "iOS", version: "17.2" }
+      device: { type: "tablet", model: "iPad", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: true
+    is_pc: false
+    is_bot: false
+
+  - description: "Safari on iPad Pro"
+    input: "Mozilla/5.0 (iPad; CPU OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
+    parse:
+      browser: { name: "Mobile Safari", version: "16.0", major: "16" }
+      os: { name: "iOS", version: "16.0" }
+      device: { type: "tablet", model: "iPad", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: true
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # Tablets - Android
+  # ============================================================================
+
+  - description: "Chrome on Android tablet"
+    input: "Mozilla/5.0 (Linux; Android 13; Pixel Tablet) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.144 Safari/537.36"
+    parse:
+      browser: { name: "Chrome", version: "120.0.6099.144", major: "120" }
+      os: { name: "Android", version: "13" }
+      device: { type: "tablet", model: "Pixel Tablet", vendor: "Google" }
+      engine: { name: "Blink", version: "120.0.6099.144" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: true
+    is_pc: false
+    is_bot: false
+
+  - description: "Chrome on Samsung Galaxy Tab"
+    input: "Mozilla/5.0 (Linux; Android 12; SM-X906C) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+    parse:
+      browser: { name: "Chrome", version: "119.0.0.0", major: "119" }
+      os: { name: "Android", version: "12" }
+      device: { type: "tablet", model: "SM-X906C", vendor: "Samsung" }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: true
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # Bots & Crawlers - Search Engines
+  # ============================================================================
+
+  - description: "Googlebot"
+    input: "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    parse:
+      browser: { name: "Googlebot", version: "2.1", major: "2" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Google" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Googlebot Smartphone"
+    input: "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    parse:
+      browser: { name: "Googlebot", version: "2.1", major: "2" }
+      os: { name: "Android", version: "6.0.1" }
+      device: { type: "bot", model: "Nexus 5X", vendor: "Google" }
+      engine: { name: "Blink", version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Bingbot"
+    input: "Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)"
+    parse:
+      browser: { name: "bingbot", version: "2.0", major: "2" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Microsoft" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Yahoo Slurp"
+    input: "Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)"
+    parse:
+      browser: { name: "Yahoo! Slurp", version: null, major: null }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Yahoo" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "DuckDuckBot"
+    input: "DuckDuckBot/1.0; (+http://duckduckgo.com/duckduckbot.html)"
+    parse:
+      browser: { name: "DuckDuckBot", version: "1.0", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "DuckDuckGo" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Baiduspider"
+    input: "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)"
+    parse:
+      browser: { name: "Baiduspider", version: "2.0", major: "2" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Baidu" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Yandex Bot"
+    input: "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)"
+    parse:
+      browser: { name: "YandexBot", version: "3.0", major: "3" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Yandex" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  # ============================================================================
+  # Bots & Crawlers - Social Media
+  # ============================================================================
+
+  - description: "Facebook External Hit"
+    input: "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"
+    parse:
+      browser: { name: "facebookexternalhit", version: "1.1", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Facebook" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Twitter Bot"
+    input: "Twitterbot/1.0"
+    parse:
+      browser: { name: "Twitterbot", version: "1.0", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Twitter" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "LinkedIn Bot"
+    input: "LinkedInBot/1.0 (compatible; Mozilla/5.0; Apache-HttpClient +http://www.linkedin.com)"
+    parse:
+      browser: { name: "LinkedInBot", version: "1.0", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "LinkedIn" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Slack Link Unfurling"
+    input: "Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)"
+    parse:
+      browser: { name: "Slackbot", version: "1.0", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Slack" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  # ============================================================================
+  # Bots & Crawlers - AI & Monitoring
+  # ============================================================================
+
+  - description: "ChatGPT User Agent"
+    input: "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; ChatGPT-User/1.0; +https://openai.com/bot"
+    parse:
+      browser: { name: "ChatGPT-User", version: "1.0", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "OpenAI" }
+      engine: { name: "Blink", version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "GPTBot"
+    input: "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; GPTBot/1.0; +https://openai.com/gptbot)"
+    parse:
+      browser: { name: "GPTBot", version: "1.0", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "OpenAI" }
+      engine: { name: "Blink", version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Claude-Web"
+    input: "Claude-Web/1.0"
+    parse:
+      browser: { name: "Claude-Web", version: "1.0", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Anthropic" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Pingdom Bot"
+    input: "Pingdom.com_bot_version_1.4_(http://www.pingdom.com/)"
+    parse:
+      browser: { name: "Pingdom", version: "1.4", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Pingdom" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "UptimeRobot"
+    input: "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)"
+    parse:
+      browser: { name: "UptimeRobot", version: "2.0", major: "2" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "UptimeRobot" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  # ============================================================================
+  # Edge Cases
+  # ============================================================================
+
+  - description: "Empty string"
+    input: ""
+    parse:
+      browser: { name: null, version: null, major: null }
+      os: { name: null, version: null }
+      device: { type: null, model: null, vendor: null }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Malformed user-agent"
+    input: "This is not a valid user agent string at all!"
+    parse:
+      browser: { name: null, version: null, major: null }
+      os: { name: null, version: null }
+      device: { type: null, model: null, vendor: null }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Very short user-agent"
+    input: "Mozilla/5.0"
+    parse:
+      browser: { name: null, version: null, major: null }
+      os: { name: null, version: null }
+      device: { type: null, model: null, vendor: null }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # Additional Browsers & Devices
+  # ============================================================================
+
+  - description: "Opera on Windows"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 OPR/105.0.0.0"
+    parse:
+      browser: { name: "Opera", version: "105.0.0.0", major: "105" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Brave Browser"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Brave/120"
+    parse:
+      browser: { name: "Brave", version: "120", major: "120" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Vivaldi Browser"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Vivaldi/6.5.3206.50"
+    parse:
+      browser: { name: "Vivaldi", version: "6.5.3206.50", major: "6" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "UC Browser on Android"
+    input: "Mozilla/5.0 (Linux; U; Android 12; en-US; SM-G998B) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 UCBrowser/13.4.0.1306 Mobile Safari/537.36"
+    parse:
+      browser: { name: "UC Browser", version: "13.4.0.1306", major: "13" }
+      os: { name: "Android", version: "12" }
+      device: { type: "mobile", model: "SM-G998B", vendor: "Samsung" }
+      engine: { name: "Blink", version: "57.0.2987.108" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Opera Mini"
+    input: "Opera/9.80 (Android; Opera Mini/65.0.2254/191.272; U; en) Presto/2.12.423 Version/12.16"
+    parse:
+      browser: { name: "Opera Mini", version: "65.0.2254", major: "65" }
+      os: { name: "Android", version: null }
+      device: { type: "mobile", model: null, vendor: null }
+      engine: { name: "Presto", version: "2.12.423" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Chrome on Chrome OS"
+    input: "Mozilla/5.0 (X11; CrOS x86_64 15278.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.216 Safari/537.36"
+    parse:
+      browser: { name: "Chrome", version: "120.0.6099.216", major: "120" }
+      os: { name: "Chrome OS", version: "15278.0.0" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.6099.216" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Microsoft Edge Mobile on Android"
+    input: "Mozilla/5.0 (Linux; Android 13; SM-G998B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36 EdgA/119.0.0.0"
+    parse:
+      browser: { name: "Edge Mobile", version: "119.0.0.0", major: "119" }
+      os: { name: "Android", version: "13" }
+      device: { type: "mobile", model: "SM-G998B", vendor: "Samsung" }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # Gaming Consoles & Special Devices
+  # ============================================================================
+
+  - description: "PlayStation 5 Browser"
+    input: "Mozilla/5.0 (PlayStation 5 4.03) AppleWebKit/605.1.15 (KHTML, like Gecko)"
+    parse:
+      browser: { name: null, version: null, major: null }
+      os: { name: null, version: "4.03" }
+      device: { type: "console", model: "PlayStation 5", vendor: "Sony" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Nintendo Switch Browser"
+    input: "Mozilla/5.0 (Nintendo Switch; WifiWebAuthApplet) AppleWebKit/606.4 (KHTML, like Gecko) NF/6.0.1.15.4 NintendoBrowser/5.1.0.20393"
+    parse:
+      browser: { name: "NintendoBrowser", version: "5.1.0.20393", major: "5" }
+      os: { name: null, version: null }
+      device: { type: "console", model: "Nintendo Switch", vendor: "Nintendo" }
+      engine: { name: "WebKit", version: "606.4" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Apple Watch"
+    input: "Mozilla/5.0 (Apple Watch; CPU Watch OS 9_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
+    parse:
+      browser: { name: null, version: null, major: null }
+      os: { name: "Watch OS", version: "9.0" }
+      device: { type: "wearable", model: "Apple Watch", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Smart TV - Samsung Tizen"
+    input: "Mozilla/5.0 (SMART-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Version/6.0 TV Safari/537.36"
+    parse:
+      browser: { name: "Samsung Internet", version: "6.0", major: "6" }
+      os: { name: "Tizen", version: "6.0" }
+      device: { type: "tv", model: null, vendor: "Samsung" }
+      engine: { name: "Blink", version: "537.36" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # Older/Legacy Devices
+  # ============================================================================
+
+  - description: "BlackBerry Browser"
+    input: "Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.1.0.346 Mobile Safari/534.11+"
+    parse:
+      browser: { name: "BlackBerry Browser", version: "7.1.0.346", major: "7" }
+      os: { name: "BlackBerry OS", version: null }
+      device: { type: "mobile", model: "BlackBerry 9900", vendor: "BlackBerry" }
+      engine: { name: "WebKit", version: "534.11" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Windows Phone IE Mobile"
+    input: "Mozilla/5.0 (Windows Phone 10.0; Android 6.0.1; Microsoft; Lumia 950) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Mobile Safari/537.36 Edge/15.14977"
+    parse:
+      browser: { name: "Edge Mobile", version: "15.14977", major: "15" }
+      os: { name: "Windows Phone", version: "10.0" }
+      device: { type: "mobile", model: "Lumia 950", vendor: "Microsoft" }
+      engine: { name: "EdgeHTML", version: "15.14977" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Kindle Fire Tablet"
+    input: "Mozilla/5.0 (Linux; Android 9; KFMAWI) AppleWebKit/537.36 (KHTML, like Gecko) Silk/119.3.6 like Chrome/119.0.0.0 Safari/537.36"
+    parse:
+      browser: { name: "Silk", version: "119.3.6", major: "119" }
+      os: { name: "Android", version: "9" }
+      device: { type: "tablet", model: "KFMAWI", vendor: "Amazon" }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: true
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # Modern Browsers (2023-2026)
+  # ============================================================================
+
+  - description: "Arc Browser on macOS"
+    input: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Arc/1.0"
+    parse:
+      browser: { name: "Arc", version: "1.0", major: "1" }
+      os: { name: "Mac OS X", version: "10.15.7" }
+      device: { type: "desktop", model: null, vendor: "Apple" }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Brave on iOS"
+    input: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1 Brave/1.60"
+    parse:
+      browser: { name: "Brave Mobile", version: "1.60", major: "1" }
+      os: { name: "iOS", version: "17.0" }
+      device: { type: "mobile", model: "iPhone", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Brave on Android"
+    input: "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36 Brave/1.60"
+    parse:
+      browser: { name: "Brave Mobile", version: "1.60", major: "1" }
+      os: { name: "Android", version: "13" }
+      device: { type: "mobile", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "DuckDuckGo Browser on Android"
+    input: "Mozilla/5.0 (Linux; Android 12) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/119.0.0.0 Mobile DuckDuckGo/5 Safari/537.36"
+    parse:
+      browser: { name: "DuckDuckGo Mobile", version: "5", major: "5" }
+      os: { name: "Android", version: "12" }
+      device: { type: "mobile", model: null, vendor: null }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Tor Browser on Windows"
+    input: "Mozilla/5.0 (Windows NT 10.0; rv:109.0) Gecko/20100101 Firefox/115.0"
+    parse:
+      browser: { name: "Firefox", version: "115.0", major: "115" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Gecko", version: "115.0" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Opera GX on Windows"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 OPR/105.0.0.0 OPRGX/105.0.0.0"
+    parse:
+      browser: { name: "Opera GX", version: "105.0.0.0", major: "105" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  # ============================================================================
+  # International Browsers
+  # ============================================================================
+
+  - description: "Yandex Browser on Windows"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 YaBrowser/23.11.0.0 Safari/537.36"
+    parse:
+      browser: { name: "Yandex Browser", version: "23.11.0.0", major: "23" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "QQ Browser on Android"
+    input: "Mozilla/5.0 (Linux; Android 12; SM-G991B) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/89.0.4389.72 Mobile Safari/537.36 QQBrowser/13.0"
+    parse:
+      browser: { name: "QQ Browser", version: "13.0", major: "13" }
+      os: { name: "Android", version: "12" }
+      device: { type: "mobile", model: "SM-G991B", vendor: "Samsung" }
+      engine: { name: "Blink", version: "89.0.4389.72" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # WebView Contexts
+  # ============================================================================
+
+  - description: "Android WebView"
+    input: "Mozilla/5.0 (Linux; Android 13; Pixel 6) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/120.0.6099.144 Mobile Safari/537.36"
+    parse:
+      browser: { name: "Chrome WebView", version: "120.0.6099.144", major: "120" }
+      os: { name: "Android", version: "13" }
+      device: { type: "mobile", model: "Pixel 6", vendor: "Google" }
+      engine: { name: "Blink", version: "120.0.6099.144" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "iOS WKWebView"
+    input: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
+    parse:
+      browser: { name: "Mobile Safari", version: null, major: null }
+      os: { name: "iOS", version: "17.0" }
+      device: { type: "mobile", model: "iPhone", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  # ============================================================================
+  # Headless Browsers & Automation
+  # ============================================================================
+
+  - description: "Puppeteer (Headless Chrome)"
+    input: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/120.0.0.0 Safari/537.36"
+    parse:
+      browser: { name: "Chrome Headless", version: "120.0.0.0", major: "120" }
+      os: { name: "Linux", version: null }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Playwright (Chromium)"
+    input: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    parse:
+      browser: { name: "Chrome", version: "120.0.0.0", major: "120" }
+      os: { name: "Linux", version: null }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Selenium WebDriver"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Selenium"
+    parse:
+      browser: { name: "Chrome", version: "120.0.0.0", major: "120" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  # ============================================================================
+  # Additional Edge Cases
+  # ============================================================================
+
+  - description: "Unicode characters in user-agent"
+    input: "Mozilla/5.0 (Windows NT 10.0) Chrome/120.0 🚀 Safari/537.36"
+    parse:
+      browser: { name: "Chrome", version: "120.0", major: "120" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Special characters and escaped strings"
+    input: "Mozilla/5.0 (X11; Linux) AppleWebKit/537.36 \"quoted\" Chrome/120.0"
+    parse:
+      browser: { name: "Chrome", version: "120.0", major: "120" }
+      os: { name: "Linux", version: null }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Very long user-agent string (truncation test)"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 WithAReallyLongCustomStringThatGoesOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOnAndOn"
+    parse:
+      browser: { name: "Chrome", version: "120.0.0.0", major: "120" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "User-agent with multiple spaces"
+    input: "Mozilla/5.0   (Windows  NT  10.0)  Chrome/120.0"
+    parse:
+      browser: { name: "Chrome", version: "120.0", major: "120" }
+      os: { name: "Windows", version: "10" }
+      device: { type: "desktop", model: null, vendor: null }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Case sensitivity test - lowercase bot"
+    input: "mozilla/5.0 (compatible; googlebot/2.1)"
+    parse:
+      browser: { name: "Googlebot", version: "2.1", major: "2" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Google" }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+# Total test cases: 80
