@@ -33,7 +33,7 @@ is_bot(ua_string)      # True for crawlers/bots
 ## Features
 
 ✅ **Parse complete user-agent strings** into structured data (browser, OS, device, engine, CPU)
-✅ **Detect device types** - mobile phones, tablets, desktops, bots, consoles, wearables, TVs
+✅ **Detect device types** - mobile phones, tablets, desktops, bots, consoles, wearables, smart TVs
 ✅ **Identify browsers** - Chrome, Firefox, Safari, Edge, Opera, and 30+ others
 ✅ **Recognize operating systems** - Windows, macOS, Linux, iOS, Android, Chrome OS
 ✅ **Detect bots & crawlers** - Search engines, social media, AI crawlers, monitoring services

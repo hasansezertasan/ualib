@@ -63,6 +63,7 @@ Desktop.ini
 *.tmp
 *.temp
 .cache/
+.venv/
 
 # Documentation builds
 docs/_build/

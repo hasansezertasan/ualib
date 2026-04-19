@@ -26,8 +26,7 @@ A structured object (UserAgent) with the following properties:
     "name": string,      // e.g., "Windows", "macOS", "Linux", "iOS", "Android"
     "version": string    // e.g., "10", "14.2", "11.0"
   },
-  "device": {
-    "type": string,      // e.g., "mobile", "tablet", "desktop", "bot", "wearable", "console", "tv", null
+  "device": {"type": string,      // e.g., "mobile", "tablet", "desktop", "bot", "wearable", "console", "smarttv", null
     "model": string,     // e.g., "iPhone", "iPad", "Pixel 6", null
     "vendor": string     // e.g., "Apple", "Samsung", "Google", null
   },
@@ -208,7 +207,7 @@ Valid values for `device.type`:
 - `"bot"` - Crawlers, spiders, and automated agents
 - `"wearable"` - Smartwatches and wearable devices
 - `"console"` - Gaming consoles
-- `"tv"` - Smart TVs and streaming devices
+- `"smarttv"` - Smart TVs and streaming devices
 - `null` - Unknown or unclassifiable device
 
 ### Common Browsers

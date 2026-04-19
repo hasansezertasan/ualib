@@ -21,9 +21,10 @@ ualib is a **ghost library** — it contains no code, only a specification and t
    Requirements:
    1. Read SPEC.md to understand the complete behavioral specification
    2. Implement all 5 functions: parse(), is_mobile(), is_tablet(), is_pc(), is_bot()
-   3. Follow the language conventions for [YOUR LANGUAGE]
-   4. All functions should handle edge cases gracefully (empty strings, malformed input, etc.)
-   5. Make sure all test cases in tests.yaml pass
+   3. Ensure boolean functions are strictly consistent with parse().device.type results
+   4. Follow the language conventions for [YOUR LANGUAGE]
+   5. All functions should handle edge cases gracefully (empty strings, malformed input, etc.)
+   6. Make sure all test cases in tests.yaml pass
 
    Target language: [Python/JavaScript/Ruby/Go/Rust/etc.]
 

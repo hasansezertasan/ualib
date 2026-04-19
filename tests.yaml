@@ -713,7 +713,7 @@ tests:
     input: "Mozilla/5.0 (Nintendo Switch; WifiWebAuthApplet) AppleWebKit/606.4 (KHTML, like Gecko) NF/6.0.1.15.4 NintendoBrowser/5.1.0.20393"
     parse:
       browser: { name: "NintendoBrowser", version: "5.1.0.20393", major: "5" }
-      os: { name: null, version: null }
+      os: { name: "Nintendo", version: null }
       device: { type: "console", model: "Nintendo Switch", vendor: "Nintendo" }
       engine: { name: "WebKit", version: "606.4" }
       cpu: { architecture: null }
@@ -740,7 +740,7 @@ tests:
     parse:
       browser: { name: "Samsung Internet", version: "6.0", major: "6" }
       os: { name: "Tizen", version: "6.0" }
-      device: { type: "tv", model: null, vendor: "Samsung" }
+      device: { type: "smarttv", model: null, vendor: "Samsung" }
       engine: { name: "Blink", version: "537.36" }
       cpu: { architecture: null }
     is_mobile: false
@@ -1046,3 +1046,4 @@ tests:
     is_bot: true
 
 # Total test cases: 80
+80
