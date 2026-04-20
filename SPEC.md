@@ -23,10 +23,11 @@ A structured object (UserAgent) with the following properties:
     "major": string      // e.g., "120"
   },
   "os": {
-    "name": string,      // e.g., "Windows", "macOS", "Linux", "iOS", "Android"
+    "name": string,      // e.g., "Windows", "Mac OS X", "Linux", "iOS", "Android"
     "version": string    // e.g., "10", "14.2", "11.0"
   },
-  "device": {"type": string,      // e.g., "mobile", "tablet", "desktop", "bot", "wearable", "console", "smarttv", null
+  "device": {
+    "type": string,      // e.g., "mobile", "tablet", "desktop", "bot", "wearable", "console", "smarttv", null
     "model": string,     // e.g., "iPhone", "iPad", "Pixel 6", null
     "vendor": string     // e.g., "Apple", "Samsung", "Google", null
   },
@@ -137,7 +138,7 @@ Determines if the user-agent represents a desktop/PC computer.
 
 **Returns:**
 
-- `true` if the user-agent is from a desktop/laptop computer (Windows, macOS, Linux desktop)
+- `true` if the user-agent is from a desktop/laptop computer (Windows, Mac OS X, Linux desktop)
 - `false` otherwise
 
 **Behavior:**
@@ -219,11 +220,12 @@ Valid values for `device.type`:
 ### Common Operating Systems
 
 - Windows (7, 8, 8.1, 10, 11)
-- macOS (various versions)
+- Mac OS X / macOS (reported as "Mac OS X" in user-agent strings)
 - Linux (Ubuntu, Debian, Fedora, etc.)
 - iOS (iPhone OS)
 - Android
 - Chrome OS
+- Tizen
 
 ### Common Engines
 
@@ -235,10 +237,10 @@ Valid values for `device.type`:
 
 ### Common CPU Architectures
 
-- amd64 / x64 / x86_64
-- arm64 / aarch64
-- arm / armv7l
-- ia32 / x86
+- amd64 (normalize from x64, x86_64)
+- arm64 (normalize from aarch64)
+- arm (normalize from armv7l)
+- ia32 (normalize from x86)
 
 ---
 
@@ -260,7 +262,14 @@ Valid values for `device.type`:
 
 - Version strings should be kept as-is when possible
 - `major` version should extract the first numeric segment
-- Missing versions should return `null` or empty string
+- Missing versions should return `null`
+- OS versions are derived from the UA token as-is (e.g., `Windows NT 10.0` → version `"10"`, even though NT 10.0 may be Windows 10 or 11)
+
+### WebView Detection
+
+- Android WebView is identified by the presence of `Version/4.0` in a Chrome-based Android UA string
+- Android WebView should be reported as `browser.name: "Chrome WebView"`
+- iOS WKWebView is identified by the absence of a `Version/` or `Safari/` token combined with `Mobile/` in an iOS UA string
 
 ### Nullability
 
@@ -277,9 +286,8 @@ Valid values for `device.type`:
 ### Input Validation
 
 - User-agent strings can be up to 2048 characters (practical browser limit)
-- Strings exceeding this should be truncated before parsing
-- Control characters (0x00-0x1F) should be stripped or replaced
-- Very long strings (>10KB) may indicate malicious input and should be rejected or truncated
+- Strings exceeding 2048 characters should be truncated to 2048 before parsing
+- Control characters (0x00-0x1F) should be stripped before parsing
 
 ---
 
@@ -312,6 +320,8 @@ is_bot(ua) ⟺ parse(ua).device.type == "bot"
 ```
 
 **This invariant must hold for ALL inputs, without exception.**
+
+When `device.type` is `null` (unknown/unclassifiable), all four boolean functions return `false`.
 
 **Bot Detection Priority**: When a user-agent is identified as a bot (contains bot signatures like "Googlebot", "bingbot", etc.), it should ALWAYS return `device.type = "bot"`, even if it also contains mobile/tablet indicators. This means:
 - Googlebot Smartphone → `device.type = "bot"`, `is_mobile() = false`, `is_bot() = true`
@@ -350,7 +360,7 @@ Implementations must handle user-agent strings safely:
 
 - **Never echo raw user-agent strings** in error messages, logs, or responses (XSS risk)
 - **Sanitize UA strings before display**: Strip control characters (0x00-0x1F)
-- **Validate string length**: Reject or truncate strings longer than 2048 characters
+- **Validate string length**: Truncate strings longer than 2048 characters before parsing
 - **Prevent ReDoS**: Use timeouts on regex operations (max 100ms per pattern)
 - **Rate limiting**: Consider limiting parse() calls per client to prevent DoS
 - **No eval/exec**: Never execute code from user-agent strings

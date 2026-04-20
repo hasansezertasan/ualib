@@ -42,7 +42,6 @@ go.sum
 *.swp
 *.swo
 *~
-.DS_Store
 *.sublime-*
 
 # Test artifacts

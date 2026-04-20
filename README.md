@@ -9,7 +9,7 @@ ualib is a "ghost library" — it contains no implementation code, only a comple
 Modern AI coding assistants like Claude, Cursor, and GitHub Copilot can reliably implement well-specified utilities. Instead of distributing code across multiple languages, ualib provides:
 
 - **SPEC.md** - Complete behavioral specification for all functions
-- **tests.yaml** - 80+ language-agnostic test cases
+- **tests.yaml** - 85+ language-agnostic test cases
 - **INSTALL.md** - Instructions for AI-assisted implementation
 
 This approach works well for focused utilities with clear specifications and no complex dependencies.
@@ -38,7 +38,7 @@ is_bot(ua_string)      # True for crawlers/bots
 ✅ **Recognize operating systems** - Windows, macOS, Linux, iOS, Android, Chrome OS
 ✅ **Detect bots & crawlers** - Search engines, social media, AI crawlers, monitoring services
 ✅ **Handle edge cases** - Empty strings, malformed input, unicode, very long strings
-✅ **80+ comprehensive test cases** covering real-world user-agent strings
+✅ **85+ comprehensive test cases** covering real-world user-agent strings
 
 ## Quick Start
 
@@ -120,7 +120,7 @@ if (isMobile(req.headers["user-agent"])) {
 **Go**
 
 ```go
-import "github.com/yourusername/ualib"
+import "github.com/<your-username>/ualib"
 
 // Parse full details
 ua := ualib.Parse("Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X)...")
@@ -140,7 +140,7 @@ if ualib.IsMobile(r.Header.Get("User-Agent")) {
 
 - **README.md** (this file) - Project overview and quick start
 - **SPEC.md** - Complete behavioral specification with examples
-- **tests.yaml** - 80+ language-agnostic test cases
+- **tests.yaml** - 85+ language-agnostic test cases
 - **INSTALL.md** - Detailed implementation instructions
 - **LICENSE** - MIT License
 
@@ -228,7 +228,7 @@ if ua.device.type == 'bot' and not is_verified_bot(ua):
 
 ## Testing Your Implementation
 
-Your implementation should pass all 80+ test cases in `tests.yaml`. The tests cover:
+Your implementation should pass all 85+ test cases in `tests.yaml`. The tests cover:
 
 - ✅ Desktop browsers (Windows, macOS, Linux)
 - ✅ Mobile phones (iOS, Android)
@@ -320,7 +320,7 @@ package main
 
 import (
     "fmt"
-    "github.com/yourusername/ualib"
+    "github.com/<your-username>/ualib"
 )
 
 func main() {

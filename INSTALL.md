@@ -115,6 +115,30 @@ Additional requirements:
 - Include PHPDoc comments
 ```
 
+### Java
+
+```
+Target language: Java
+
+Additional requirements:
+- Use Java 17+ features (records, sealed classes, etc.)
+- Follow standard Java naming conventions (isMobile instead of is_mobile)
+- Create proper package structure
+- Include Javadoc comments
+```
+
+### C\#
+
+```
+Target language: C#
+
+Additional requirements:
+- Use C# 11+ / .NET 7+ features (records, nullable reference types, etc.)
+- Follow .NET naming conventions (IsMobile instead of is_mobile)
+- Create proper namespace structure
+- Include XML documentation comments
+```
+
 ## Manual Implementation
 
 If you prefer to implement it yourself without AI:
@@ -192,7 +216,11 @@ if (isMobile(uaString)) {
 ```go
 package main
 
-import "github.com/yourusername/ualib"
+import (
+    "fmt"
+
+    "github.com/<your-username>/ualib"
+)
 
 func main() {
     // Parse a full user-agent string
