@@ -1,0 +1,74 @@
+# Ghost library - no code implementations should be committed
+# Only specification and test files belong in this repository
+
+# Language-specific implementation files
+*.py
+*.js
+*.ts
+*.go
+*.rs
+*.rb
+*.php
+*.java
+*.cs
+*.cpp
+*.c
+*.h
+
+# Except example/demo implementations and tooling in specific folders
+!examples/**/*.py
+!examples/**/*.js
+!examples/**/*.ts
+!scripts/**
+!tools/**
+
+# Package manager files (if someone generates an implementation here)
+node_modules/
+__pycache__/
+*.egg-info/
+dist/
+build/
+target/
+vendor/
+Cargo.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+Gemfile.lock
+composer.lock
+go.sum
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-*
+
+# Test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+coverage/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.venv/
+
+# Documentation builds
+docs/_build/
+site/
+
+# MCP and Playwright
+.playwright-mcp/
