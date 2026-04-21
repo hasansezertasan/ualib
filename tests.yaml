@@ -15,9 +15,9 @@
 # parse.device.type per the SPEC.md invariant.
 
 # Version Note: Version numbers should match exactly as specified in these tests.
-# If your parser extracts a different version format from the same UA string,
-# update this file to reflect the canonical format for that browser/OS.
-# The goal is consistency across implementations, not perfection in version parsing.
+# These test values are the canonical expected output. Do NOT modify this file
+# to match your parser's output — instead, adjust your implementation to match
+# these expected values. The goal is consistency across implementations.
 
 tests:
   # ============================================================================
@@ -58,6 +58,19 @@ tests:
       device: { type: "desktop", model: null, vendor: null }
       engine: { name: "Blink", version: "120.0.0.0" }
       cpu: { architecture: "amd64" }
+    is_mobile: false
+    is_tablet: false
+    is_pc: true
+    is_bot: false
+
+  - description: "Edge on macOS"
+    input: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0"
+    parse:
+      browser: { name: "Edge", version: "120.0.0.0", major: "120" }
+      os: { name: "Mac OS X", version: "10.15.7" }
+      device: { type: "desktop", model: null, vendor: "Apple" }
+      engine: { name: "Blink", version: "120.0.0.0" }
+      cpu: { architecture: null }
     is_mobile: false
     is_tablet: false
     is_pc: true
@@ -294,6 +307,19 @@ tests:
     is_pc: false
     is_bot: false
 
+  - description: "Firefox on iPad"
+    input: "Mozilla/5.0 (iPad; CPU OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/121.0 Mobile/15E148 Safari/605.1.15"
+    parse:
+      browser: { name: "Firefox Mobile iOS", version: "121.0", major: "121" }
+      os: { name: "iOS", version: "17.2" }
+      device: { type: "tablet", model: "iPad", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: true
+    is_pc: false
+    is_bot: false
+
   - description: "Safari on iPad Pro"
     input: "Mozilla/5.0 (iPad; CPU OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
     parse:
@@ -331,6 +357,23 @@ tests:
       os: { name: "Android", version: "12" }
       device: { type: "tablet", model: "SM-X906C", vendor: "Samsung" }
       engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: true
+    is_pc: false
+    is_bot: false
+
+  # Note: Android tablets without a model name and without the "Mobile" token
+  # are distinguished from phones by the ABSENCE of "Mobile" in the UA string.
+  # Chrome on Android phones always includes "Mobile Safari/537.36", while
+  # tablets use just "Safari/537.36" (no "Mobile" prefix).
+  - description: "Chrome on generic Android tablet (no model name)"
+    input: "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.144 Safari/537.36"
+    parse:
+      browser: { name: "Chrome", version: "120.0.6099.144", major: "120" }
+      os: { name: "Android", version: "13" }
+      device: { type: "tablet", model: null, vendor: null }
+      engine: { name: "Blink", version: "120.0.6099.144" }
       cpu: { architecture: null }
     is_mobile: false
     is_tablet: true
@@ -531,6 +574,32 @@ tests:
     is_pc: false
     is_bot: true
 
+  - description: "ClaudeBot (Anthropic web crawler)"
+    input: "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; ClaudeBot/1.0; +claudebot@anthropic.com)"
+    parse:
+      browser: { name: "ClaudeBot", version: "1.0", major: "1" }
+      os: { name: null, version: null }
+      device: { type: "bot", model: null, vendor: "Anthropic" }
+      engine: { name: "Blink", version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
+  - description: "Applebot"
+    input: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15 (Applebot/0.1; +http://www.apple.com/go/applebot)"
+    parse:
+      browser: { name: "Applebot", version: "0.1", major: "0" }
+      os: { name: "Mac OS X", version: "10.15.5" }
+      device: { type: "bot", model: null, vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: true
+
   - description: "Pingdom Bot"
     input: "Pingdom.com_bot_version_1.4_(http://www.pingdom.com/)"
     parse:
@@ -560,6 +629,23 @@ tests:
   # ============================================================================
   # Edge Cases
   # ============================================================================
+
+  # Note: YAML parses `null` as a native null value, not the string "null".
+  # Implementations should handle this gracefully — most YAML parsers will
+  # deliver the language's null/nil/None type. Test runners should verify
+  # their YAML parser handles this correctly.
+  - description: "Null input"
+    input: null
+    parse:
+      browser: { name: null, version: null, major: null }
+      os: { name: null, version: null }
+      device: { type: null, model: null, vendor: null }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
 
   - description: "Empty string"
     input: ""
@@ -688,6 +774,32 @@ tests:
     input: "Mozilla/5.0 (Linux; Android 13; SM-G998B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36 EdgA/119.0.0.0"
     parse:
       browser: { name: "Edge Mobile", version: "119.0.0.0", major: "119" }
+      os: { name: "Android", version: "13" }
+      device: { type: "mobile", model: "SM-G998B", vendor: "Samsung" }
+      engine: { name: "Blink", version: "119.0.0.0" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Edge on iOS (iPhone)"
+    input: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) EdgiOS/120.0.2210.126 Version/17.0 Mobile/15E148 Safari/604.1"
+    parse:
+      browser: { name: "Edge Mobile iOS", version: "120.0.2210.126", major: "120" }
+      os: { name: "iOS", version: "17.2" }
+      device: { type: "mobile", model: "iPhone", vendor: "Apple" }
+      engine: { name: "WebKit", version: "605.1.15" }
+      cpu: { architecture: null }
+    is_mobile: true
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "Opera Mobile on Android"
+    input: "Mozilla/5.0 (Linux; Android 13; SM-G998B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Mobile Safari/537.36 OPR/79.0.4195.76887"
+    parse:
+      browser: { name: "Opera Mobile", version: "79.0.4195.76887", major: "79" }
       os: { name: "Android", version: "13" }
       device: { type: "mobile", model: "SM-G998B", vendor: "Samsung" }
       engine: { name: "Blink", version: "119.0.0.0" }
@@ -959,19 +1071,9 @@ tests:
     is_bot: false
 
   # Note: Playwright's default UA is indistinguishable from regular Chrome.
-  # This test verifies it is NOT classified as a bot.
-  - description: "Playwright Chromium (indistinguishable from Chrome)"
-    input: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    parse:
-      browser: { name: "Chrome", version: "120.0.0.0", major: "120" }
-      os: { name: "Linux", version: null }
-      device: { type: "desktop", model: null, vendor: null }
-      engine: { name: "Blink", version: "120.0.0.0" }
-      cpu: { architecture: "amd64" }
-    is_mobile: false
-    is_tablet: false
-    is_pc: true
-    is_bot: false
+  # Its UA is identical to "Chrome on Linux" above — automation tools that don't
+  # add custom tokens are classified the same as regular browsers.
+  # No separate test case needed (would be an exact duplicate).
 
   - description: "Selenium WebDriver"
     input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Selenium"
@@ -1068,6 +1170,22 @@ tests:
     is_pc: false
     is_bot: false
 
+  # Note: The literal string "null" is NOT the same as YAML null.
+  # This tests that a UA string containing the word "null" is treated as
+  # a regular (unparseable) string, not as a null/None/nil value.
+  - description: "Literal string 'null' (not YAML null)"
+    input: "null"
+    parse:
+      browser: { name: null, version: null, major: null }
+      os: { name: null, version: null }
+      device: { type: null, model: null, vendor: null }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
   - description: "Control characters in user-agent (should be stripped)"
     input: "Mozilla/5.0\x00 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0"
     parse:
@@ -1081,8 +1199,12 @@ tests:
     is_pc: true
     is_bot: false
 
-  - description: "String exceeding 2048 characters (truncation test)"
-    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  # This string is 2074 characters total. The first 2048 characters contain a valid
+  # Chrome desktop UA padded with A's. The bot signature "compatible; Googlebot/2.1"
+  # starts at position 2049, so after truncation to 2048 chars it should be stripped.
+  # Result: Chrome desktop, NOT a bot.
+  - description: "String exceeding 2048 characters (truncation boundary test)"
+    input: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA compatible; Googlebot/2.1"
     parse:
       browser: { name: "Chrome", version: "120.0.0.0", major: "120" }
       os: { name: "Windows", version: "10" }
@@ -1261,6 +1383,52 @@ tests:
     is_tablet: false
     is_pc: false
     is_bot: true
+
+  # ============================================================================
+  # Programmatic HTTP Clients (not bots, not browsers)
+  # ============================================================================
+
+  # Note: Programmatic HTTP clients like curl, wget, and python-requests are
+  # NOT bots (no crawling/indexing intent) and NOT browsers (no rendering).
+  # They should return device.type: null (unknown/unclassifiable).
+  - description: "curl"
+    input: "curl/8.4.0"
+    parse:
+      browser: { name: "curl", version: "8.4.0", major: "8" }
+      os: { name: null, version: null }
+      device: { type: null, model: null, vendor: null }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "wget"
+    input: "Wget/1.21.4"
+    parse:
+      browser: { name: "Wget", version: "1.21.4", major: "1" }
+      os: { name: null, version: null }
+      device: { type: null, model: null, vendor: null }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
+
+  - description: "python-requests"
+    input: "python-requests/2.31.0"
+    parse:
+      browser: { name: "python-requests", version: "2.31.0", major: "2" }
+      os: { name: null, version: null }
+      device: { type: null, model: null, vendor: null }
+      engine: { name: null, version: null }
+      cpu: { architecture: null }
+    is_mobile: false
+    is_tablet: false
+    is_pc: false
+    is_bot: false
 
   # ============================================================================
   # URL-Encoded & Desktop-Mode Tests

@@ -1,6 +1,6 @@
 # ualib Specification
 
-A ghost library for parsing user-agent strings into structured data. This library identifies devices, browsers, operating systems, and other characteristics from HTTP User-Agent headers.
+A ghost library (specification-only library) for parsing user-agent strings into structured data. This library identifies devices, browsers, operating systems, and other characteristics from HTTP User-Agent headers.
 
 ## Core Functions
 
@@ -81,7 +81,7 @@ Determines if the user-agent represents a mobile phone device.
 **Behavior:**
 
 - Tablets should return `false` (use `is_tablet` for tablets)
-- Desktop browsers on mobile user-agent mode should return `true`
+- Based solely on UA string analysis: if `parse(ua).device.type == "mobile"`, return `true` (e.g., a desktop browser configured to send a mobile UA will return `true`)
 - Bots should return `false` (use `is_bot` for bots)
 
 **Example:**
@@ -113,7 +113,7 @@ Determines if the user-agent represents a tablet device.
 
 - Mobile phones should return `false`
 - Bots should return `false` (use `is_bot` for bots)
-- Desktop mode on tablets may return `false` if the UA string doesn't indicate tablet
+- Desktop mode on tablets will return `false` if the UA string doesn't indicate tablet
 - Large phones (phablets) should typically return `false` unless explicitly identified as tablets
 
 **Example:**
@@ -143,9 +143,8 @@ Determines if the user-agent represents a desktop/PC computer.
 
 **Behavior:**
 
-- Should return `false` for mobile and tablet devices
-- Should return `false` for bots (use `is_bot` for bots)
-- Desktop browsers in mobile mode should return `false`
+- Based solely on UA string analysis: returns `true` only if `parse(ua).device.type == "desktop"`
+- Returns `false` for mobile, tablet, bot, and all other device types
 
 **Example:**
 
@@ -174,10 +173,10 @@ Determines if the user-agent represents a bot, crawler, or spider.
 
 **Behavior:**
 
-- Should detect common search engine crawlers (Google, Bing, Yahoo, Baidu, Yandex, DuckDuckGo)
+- Should detect common search engine crawlers (Googlebot, Bingbot, Yahoo Slurp, Baiduspider, YandexBot, DuckDuckBot, Applebot)
 - Should detect social media crawlers (Facebook, Twitter, LinkedIn, Slack)
 - Should detect monitoring services (Pingdom, StatusCake, UptimeRobot)
-- Should detect AI crawlers (GPTBot, Claude-Web, ChatGPT-User)
+- Should detect AI crawlers (GPTBot, ClaudeBot, Claude-Web, ChatGPT-User)
 - Generic "bot" keywords in UA strings should trigger `true`
 - Headless browsers without explicit bot identification should return `false`
 
@@ -217,6 +216,8 @@ Valid values for `device.type`:
 - Mobile Safari, Chrome Mobile, Firefox Mobile, Samsung Internet
 - UC Browser, Opera Mini, Brave, Vivaldi
 
+**Note on Samsung Internet**: On Samsung Tizen Smart TVs, the browser is identified as "Samsung Internet" even though the UA string shows `TV Safari/537.36` instead of `SamsungBrowser/`. Detection heuristic: when `SMART-TV` token is present AND `Tizen` OS is detected, report browser as "Samsung Internet" with version from the `Version/` token. This is a special case — normally `Version/` indicates Safari version.
+
 ### Common Operating Systems
 
 - Windows (7, 8, 8.1, 10, 11)
@@ -229,11 +230,11 @@ Valid values for `device.type`:
 
 ### Common Engines
 
-- Blink (Chrome, Edge, Opera)
-- WebKit (Safari, older Chrome)
+- Blink (Chrome, Edge, Opera) — identified by the frozen `AppleWebKit/537.36` token combined with a `Chrome/` version token. The Blink engine version is derived from the `Chrome/` version token
+- WebKit (Safari, iOS browsers) — identified by `AppleWebKit/` with a non-frozen version (e.g., `605.1.15`), or when no `Chrome/` token is present
 - Gecko (Firefox)
 - Trident (Internet Explorer)
-- EdgeHTML (older Edge)
+- EdgeHTML (legacy Edge) — identified by the `Edge/` token (with trailing 'e'). Chromium-based Edge uses the `Edg/` token (without trailing 'e') and uses Blink. The token name alone distinguishes them — no version comparison needed
 
 ### Common CPU Architectures
 
@@ -263,13 +264,15 @@ Valid values for `device.type`:
 - Version strings should be kept as-is when possible
 - `major` version should extract the first numeric segment
 - Missing versions should return `null`
-- OS versions are derived from the UA token as-is (e.g., `Windows NT 10.0` → version `"10"`, even though NT 10.0 may be Windows 10 or 11)
+- OS versions should be mapped from the UA token to human-readable form (e.g., `Windows NT 10.0` → version `"10"`, `Windows NT 6.3` → version `"8.1"`). Note: NT 10.0 may be Windows 10 or 11; the parser cannot distinguish them
+- For gaming consoles, the OS version represents the firmware/system software version extracted from the UA string (e.g., `PlayStation 5 4.03` → os.version `"4.03"`). The OS name may be `null` if no recognizable OS name token is present (e.g., PlayStation UAs contain a firmware version but no OS name like "Windows" or "Linux")
 
 ### WebView Detection
 
-- Android WebView is identified by the presence of `Version/4.0` in a Chrome-based Android UA string
+- Android WebView is identified by the presence of **both** `Version/4.0` **and** `Chrome/` tokens **on an Android OS**. The `Version/4.0` token alone is not sufficient — it must appear alongside a Chrome version token. Note: iOS also uses `Version/` tokens but for Safari version, not WebView detection
 - Android WebView should be reported as `browser.name: "Chrome WebView"`
-- iOS WKWebView is identified by the absence of a `Version/` or `Safari/` token combined with `Mobile/` in an iOS UA string
+- iOS WKWebView is identified by the absence of both `Version/` and `Safari/` tokens combined with the presence of `Mobile/` in an iOS UA string
+- iOS WKWebView should be reported as `browser.name: "Mobile Safari"` with `browser.version: null` and `browser.major: null` — the "Mobile Safari" name is a fallback for iOS WebKit contexts where no specific browser is identified
 
 ### Nullability
 
@@ -346,9 +349,9 @@ Different languages handle null/missing values differently. Use the appropriate 
 - **Ruby**: Use `nil`
 - **PHP**: Use `null`
 
-### CPU Architecture Detection (Deprecated)
+### CPU Architecture Detection (Limited Availability)
 
-**Important**: Modern browsers (2020+) do not expose CPU architecture in user-agent strings for privacy reasons. Most test cases show `cpu.architecture: null`.
+**Important**: Most modern browsers (2020+) do not expose CPU architecture in user-agent strings for privacy reasons. Windows and Linux X11 UAs still include architecture tokens (e.g., `Win64; x64`, `Linux x86_64`), but iOS, Android, and modern macOS UAs do not. Desktop test cases (Windows, Linux X11) show `cpu.architecture: "amd64"`, while mobile, macOS, and most other platforms show `null`.
 
 - Implementations should return `null` unless architecture is explicitly present in the UA string
 - **DO NOT** infer architecture from OS (e.g., iOS → arm64) as this is unreliable and violates user privacy
@@ -475,4 +478,4 @@ is_bot() -> false
 ## Version
 
 Specification Version: 1.0.0
-Last Updated: 2026-02-09
+Last Updated: 2026-04-21

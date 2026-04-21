@@ -15,10 +15,12 @@
 *.c
 *.h
 
-# Except example/demo implementations in specific folders
+# Except example/demo implementations and tooling in specific folders
 !examples/**/*.py
 !examples/**/*.js
 !examples/**/*.ts
+!scripts/**
+!tools/**
 
 # Package manager files (if someone generates an implementation here)
 node_modules/

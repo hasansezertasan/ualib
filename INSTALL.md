@@ -86,7 +86,7 @@ Target language: Rust
 
 Additional requirements:
 - Use idiomatic Rust with proper error handling
-- Make the API both sync and async-compatible
+- Use idiomatic Rust string types (`&str` for input, `String` for owned fields)
 - Follow Rust naming conventions
 - Include documentation tests
 ```
@@ -219,7 +219,7 @@ package main
 import (
     "fmt"
 
-    "github.com/<your-username>/ualib"
+    "github.com/hasansezertasan/ualib"
 )
 
 func main() {
